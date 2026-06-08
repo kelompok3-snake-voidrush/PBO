@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🐍 SNAKE VOIDRUSH - OOP Edition</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- MENU SCREEN -->
+        <div id="menuScreen" class="menu-screen">
+            <h1>🐍 SNAKE VOIDRUSH</h1>
+
+            <div class="menu-buttons">
+                <button class="menu-btn" id="btnStart">🎮 MULAI MAIN</button>
+                <button class="menu-btn" id="btnHighScore">🏆 HIGH SCORE</button>
+                <button class="menu-btn" id="btnInstructions">📖 PETUNJUK</button>
+            </div>
+
+            <div class="high-score-box">
+                <h2 id="highScoreText">🏆 0</h2>
+            </div>
+
+            <!-- PANEL WARNA -->
+            <div class="color-panel">
+                <h3>🎨 WARNA ULAR</h3>
+                <div class="color-options">
+                    <div class="color-btn selected" data-color="#4caf50" style="background:#4caf50;"></div>
+                    <div class="color-btn" data-color="#ff4444" style="background:#ff4444;"></div>
+                    <div class="color-btn" data-color="#3498db" style="background:#3498db;"></div>
+                    <div class="color-btn" data-color="#f1c40f" style="background:#f1c40f;"></div>
+                    <div class="color-btn" data-color="#9b59b6" style="background:#9b59b6;"></div>
+                </div>
+            </div>
+
+            <!-- LEVEL -->
+            <div class="level-panel">
+                <h3>⚡ LEVEL</h3>
+                <div class="level-buttons">
+                    <button class="level-btn active" data-level="easy">MUDAH</button>
+                    <button class="level-btn" data-level="medium">SEDANG</button>
+                    <button class="level-btn" data-level="hard">SULIT</button>
+                </div>
+            </div>
+
+            <!-- MUSIC -->
+            <div class="music-control">
+                <button class="music-btn" id="musicBtn">🔊 MUSIK</button>
+            </div>
+
+            <div class="mobile-note">
+                📱 Untuk mobile: Gunakan tombol arah di bawah atau swipe pada layar
+            </div>
+
+            <div id="instructionsPanel" class="instructions">
+                <h3>📖 CARA MAIN</h3>
+                <div class="instruction-row">
+                    <span class="key">⬆️/W</span> Atas
+                    <span class="key">⬇️/S</span> Bawah
+                    <span class="key">⬅️/A</span> Kiri
+                    <span class="key">➡️/D</span> Kanan
+                </div>
+                <div class="instruction-row">
+                    <span class="key">P</span> Pause
+                </div>
+                <div class="special-note">
+                    🌀 ULAR BISA TEMBUS DINDING<br>
+                    Mati hanya jika nabrak tubuh sendiri
+                </div>
+                <p style="margin-top:8px;">🍎 +10 | ⭐ +20</p>
+            </div>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="gameScreen" class="game-screen">
+            <div class="game-header">
+                <div class="score-box" id="scoreDisplay">🍎 0</div>
+                <div class="high-score-small" id="gameHighScore">🏆 0</div>
+                <div class="wall-pass-tag">🌀 TEMBUS</div>
+                <div class="game-controls">
+                    <button class="control-btn" id="gameMusicBtn">🔊</button>
+                    <button class="control-btn" id="pauseBtn">⏸️</button>
+                    <button class="control-btn" id="btnBackMenu">🏠</button>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas" width="500" height="500"></canvas>
+
+            <div class="touch-controls">
+                <div class="dpad">
+                    <div class="dpad-row">
+                        <button class="dpad-btn" data-dir="UP">⬆️</button>
+                    </div>
+                    <div class="dpad-row">
+                        <button class="dpad-btn" data-dir="LEFT">⬅️</button>
+                        <button class="dpad-btn" data-dir="DOWN">⬇️</button>
+                        <button class="dpad-btn" data-dir="RIGHT">➡️</button>
+                    </div>
+                </div>
+                <div class="swipe-note">
+                    👆 Swipe pada canvas • Ketuk 2x untuk pause
+                </div>
+            </div>
+
+            <div class="game-footer">
+                <span class="key">⬆️⬇️⬅️➡️</span> atau <span class="key">WASD</span> | <span class="key">P</span> pause
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GAME OVER -->
+    <div id="gameoverModal" class="modal">
+        <div class="modal-content">
+            <h2>💀 GAME OVER</h2>
+            <p id="finalScoreText">0</p>
+            <p id="newHighScoreText" style="color:#ffd700;font-size:18px;"></p>
+            <div class="modal-buttons">
+                <button class="modal-btn play-again" id="btnRestart">🔄 MAIN</button>
+                <button class="modal-btn menu" id="btnMenu">🏠 MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="gameMusic" loop preload="auto">
+        <source src="assets/snake1_theme.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Konfigurasi awal: high score dibaca dari localStorage -->
+    <script>
+        window.APP_CONFIG = {
+            initialHighScore: parseInt(localStorage.getItem('snakeHighScore') || '0', 10) || 0
+        };
+    </script>
+
+    <!-- Memuat semua class JS (urutan penting: interface -> abstrak -> turunan -> sistem) -->
+    <script src="js/classes/Drawable.js"></script>
+    <script src="js/classes/Collidable.js"></script>
+    <script src="js/classes/Edible.js"></script>
+    <script src="js/classes/HighScoreRepository.js"></script>
+    <script src="js/classes/Point.js"></script>
+    <script src="js/classes/Entity.js"></script>
+    <script src="js/classes/Snake.js"></script>
+    <script src="js/classes/Food.js"></script>
+    <script src="js/classes/SpecialFood.js"></script>
+    <script src="js/classes/AudioManager.js"></script>
+    <script src="js/classes/Renderer.js"></script>
+    <script src="js/classes/Game.js"></script>
+    <script src="js/classes/GameController.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
